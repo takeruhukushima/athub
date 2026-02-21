@@ -1,36 +1,98 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# athub
 
-## Getting Started
+AT Protocol 上で動く、分散型コラボレーションアプリの MVP 実装です。  
+GitHub の「作業の可視化」という思想を、非IT領域の活動にも使える形に翻訳しています。
 
-First, run the development server:
+このリポジトリでは、以下の 4 つの概念を中心に実装しています。
 
+- `Quest` (`app.athub.repo`): プロジェクトの器
+- `Proposal` (`app.athub.issue`): 提案・議論
+- `Contribution` (`app.athub.commit`): 行動記録
+- `Badge` (`app.athub.award`): 承認・感謝
+
+## 何ができるか（現在）
+- AT Protocol OAuth でログイン
+- Quest 作成と一覧表示
+- Quest ごとの Proposal 作成・状態変更（open/closed）
+- Quest ごとの Contribution 作成（画像/PDF の AT Blob 添付対応）
+- Proposal / Contribution に対する Badge 付与（コメント必須）
+- ホームで活動ヒートマップ、Pinned Quest、Recent Activity を表示
+- Proposal 詳細で Bsky 投稿スレッドを参照（DDS代替、公開投稿のみ）
+- Tap webhook でレコード同期し、ローカル cache テーブルを更新
+
+## 画面構成
+- `/` ダッシュボード（Overview / Pinned Quests / Recent Activity）
+- `/quests/[rkey]` Quest 詳細（Readme / Proposals / Contributions）
+- `/proposals?uri=at://...` Proposal 詳細（Bsky スレッド埋め込み・Badge）
+
+## 技術スタック
+- Next.js 16 (App Router)
+- TypeScript
+- SQLite (`better-sqlite3`) + Kysely
+- `@atproto/oauth-client-node`（OAuth セッション管理）
+- Tailwind CSS v4
+
+## セットアップ
+1. 依存関係をインストール
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
 ```
+2. 開発サーバー起動
+```bash
+pnpm dev
+```
+3. ブラウザで `http://127.0.0.1:3000` を開く
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+`pnpm dev` と `pnpm start` は起動前に `pnpm migrate` を実行します。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 環境変数
+必須ではありませんが、必要に応じて設定できます。
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `PUBLIC_URL`
+  - OAuth コールバック後のリダイレクト先
+  - 既定値: `http://127.0.0.1:3000`
+- `DATABASE_PATH`
+  - SQLite ファイルパス
+  - 既定値: `app.db`
+- `TAP_ADMIN_PASSWORD`
+  - `/api/webhook` の受信認証用パスワード
+  - 設定時は `Authorization: Bearer <password>` または Basic 認証で検証
 
-## Learn More
+## データベースとマイグレーション
+- migration 実装: `src/lib/db/migrations.ts`
+- 実行コマンド:
+```bash
+pnpm migrate
+```
+- 主なテーブル:
+  - `auth_state`, `auth_session`
+  - `account`
+  - `quest_cache`, `proposal_cache`, `contribution_cache`, `badge_cache`
 
-To learn more about Next.js, take a look at the following resources:
+## Tap 連携（任意）
+ネットワークから更新を取り込む場合は Tap から webhook を叩きます。
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- 受信エンドポイント: `POST /api/webhook`
+- 受信対象 collection:
+  - `app.athub.repo`
+  - `app.athub.issue`
+  - `app.athub.commit`
+  - `app.athub.award`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Tap 側の起動・登録方法は運用環境に合わせて設定してください。
 
-## Deploy on Vercel
+## API エンドポイント（主要）
+- `GET/POST /api/quests`
+- `GET /api/quests/[rkey]`
+- `GET/POST /api/proposals`
+- `PATCH /api/proposals/[rkey]`
+- `GET/POST /api/contributions`
+- `GET/POST /api/badges`
+- `GET /api/bsky/thread?uri=at://...`
+- `POST /api/webhook`
+- `POST /oauth/login`, `GET /oauth/callback`, `POST /oauth/logout`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 注意点（MVP）
+- DDS Analyzer 本体は未実装で、現状は Bsky スレッド参照を代替機能にしています。
+- Proposal のコメントスレッド機能は最小構成です。
+- 初回起動時に `proposal_cache` などが無いエラーが出る場合は `pnpm migrate` を実行してください。
