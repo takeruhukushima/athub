@@ -12,6 +12,7 @@
   "dependencies": {
     "@atproto/oauth-client-node": "^0.3.17",
     "better-sqlite3": "^12.6.2",
+    "cal-heatmap": "^4.2.4",
     "kysely": "^0.28.11",
     "next": "16.1.6",
     "react": "19.2.3",

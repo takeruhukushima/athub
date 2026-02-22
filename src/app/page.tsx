@@ -1,12 +1,12 @@
 import Link from "next/link";
 import { CreateQuestForm } from "@/components/CreateQuestForm";
+import { ContributionHeatmap } from "@/components/ContributionHeatmap";
 import { LoginForm } from "@/components/LoginForm";
 import { LogoutButton } from "@/components/LogoutButton";
 import { getSession } from "@/lib/auth/session";
 import { describeRepo } from "@/lib/atproto/xrpc";
 import {
   getAccountHandleByDid,
-  getContributionCountLastDays,
   getContributionHeatmap,
   getPinnedQuests,
   getRecentActivity,
@@ -20,13 +20,6 @@ interface HomeProps {
   searchParams: Promise<{
     q?: string;
   }>;
-}
-
-function heatClass(count: number): string {
-  if (count === 0) return "bg-stone-200";
-  if (count === 1) return "bg-lime-200";
-  if (count <= 3) return "bg-lime-400";
-  return "bg-lime-600";
 }
 
 export default async function Home({ searchParams }: HomeProps) {
@@ -54,15 +47,15 @@ export default async function Home({ searchParams }: HomeProps) {
     }
   }
 
-  const [contributionCount, heatmap, pinnedQuests, recentActivity, searched, latest] =
+  const [heatmap, pinnedQuests, recentActivity, searched, latest] =
     await Promise.all([
-      session ? getContributionCountLastDays(session.did, 30) : Promise.resolve(0),
       session ? getContributionHeatmap(session.did, 30) : Promise.resolve([]),
       session ? getPinnedQuests(session.did, 6) : Promise.resolve([]),
       getRecentActivity(8),
       q.trim().length > 0 ? searchQuests(q.trim()) : Promise.resolve([]),
       listLatestQuests(8),
     ]);
+  const contributionCount = heatmap.reduce((sum, day) => sum + day.count, 0);
 
   return (
     <div className="min-h-screen bg-[linear-gradient(180deg,#f5f5f4_0%,#fafaf9_40%,#ffffff_100%)] text-stone-900">
@@ -93,14 +86,8 @@ export default async function Home({ searchParams }: HomeProps) {
                 <p className="text-sm text-stone-600">
                   👣 Contributions in the last 30 days: {contributionCount}
                 </p>
-                <div className="mt-3 grid grid-cols-10 gap-1">
-                  {heatmap.map((day) => (
-                    <div
-                      key={day.date}
-                      title={`${day.date}: ${day.count}`}
-                      className={`h-4 w-4 rounded-[3px] ${heatClass(day.count)}`}
-                    />
-                  ))}
+                <div className="mt-3">
+                  <ContributionHeatmap data={heatmap} />
                 </div>
               </>
             ) : (

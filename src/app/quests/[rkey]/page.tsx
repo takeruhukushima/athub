@@ -70,7 +70,9 @@ export default async function QuestPage({ params, searchParams }: QuestPageProps
       <main className="mx-auto w-full max-w-5xl space-y-6 px-6 pb-10">
         <section className="rounded-xl border border-stone-200 bg-white p-5">
           <h1 className="text-2xl font-semibold">{quest.name}</h1>
-          <p className="mt-1 text-sm text-stone-600">Watch: 12 | Fork: 0</p>
+          <p className="mt-1 text-sm text-stone-600">
+            Proposals: {proposals.length} | Contributions: {contributions.length}
+          </p>
           <div className="mt-4 flex flex-wrap gap-2 text-sm">
             <Link
               href={`/quests/${quest.rkey}?tab=readme`}
