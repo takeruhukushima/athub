@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@atproto/oauth-client-browser':
+        specifier: ^0.3.41
+        version: 0.3.41
       '@atproto/oauth-client-node':
         specifier: ^0.3.17
         version: 0.3.17
@@ -119,6 +122,9 @@ packages:
 
   '@atproto/lexicon@0.6.1':
     resolution: {integrity: sha512-/vI1kVlY50Si+5MXpvOucelnYwb0UJ6Qto5mCp+7Q5C+Jtp+SoSykAPVvjVtTnQUH2vrKOFOwpb3C375vSKzXw==}
+
+  '@atproto/oauth-client-browser@0.3.41':
+    resolution: {integrity: sha512-4QTm8zPgm08vl53flrVmL+MS5IOhvWWctNZmEnPbvQ2t1ISw9Q5m815m2Sszi5ULMFjOqvT7lhKB7zQUn5gq5g==}
 
   '@atproto/oauth-client-node@0.3.17':
     resolution: {integrity: sha512-67LNuKAlC35Exe7CB5S0QCAnEqr6fKV9Nvp64jAHFof1N+Vc9Ltt1K9oekE5Ctf7dvpGByrHRF0noUw9l9sWLA==}
@@ -2641,6 +2647,18 @@ snapshots:
       iso-datestring-validator: 2.2.2
       multiformats: 9.9.0
       zod: 3.25.76
+
+  '@atproto/oauth-client-browser@0.3.41':
+    dependencies:
+      '@atproto-labs/did-resolver': 0.2.6
+      '@atproto-labs/handle-resolver': 0.3.6
+      '@atproto-labs/simple-store': 0.3.0
+      '@atproto/did': 0.3.0
+      '@atproto/jwk': 0.6.0
+      '@atproto/jwk-webcrypto': 0.2.0
+      '@atproto/oauth-client': 0.6.0
+      '@atproto/oauth-types': 0.6.3
+      core-js: 3.48.0
 
   '@atproto/oauth-client-node@0.3.17':
     dependencies:

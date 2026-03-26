@@ -2,6 +2,7 @@
 "use client";
 
 import { useState } from "react";
+import { getOAuthClient } from "@/lib/auth/client";
 
 export function LoginForm() {
   const [handle, setHandle] = useState("");
@@ -14,20 +15,8 @@ export function LoginForm() {
     setError(null);
 
     try {
-      const res = await fetch("/oauth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ handle }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error || "Login failed");
-      }
-
-      // 認可サーバーにリダイレクト
-      window.location.href = data.redirectUrl;
+      const client = getOAuthClient();
+      await client.signIn(handle);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed");
       setLoading(false);

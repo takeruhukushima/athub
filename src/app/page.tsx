@@ -3,7 +3,7 @@ import { CreateQuestForm } from "@/components/CreateQuestForm";
 import { ContributionHeatmap } from "@/components/ContributionHeatmap";
 import { LoginForm } from "@/components/LoginForm";
 import { LogoutButton } from "@/components/LogoutButton";
-import { getSession } from "@/lib/auth/session";
+import { getSession } from "@/lib/auth/session.server";
 import { describeRepo } from "@/lib/atproto/xrpc";
 import {
   getAccountHandleByDid,
