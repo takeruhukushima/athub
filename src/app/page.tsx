@@ -22,6 +22,8 @@ interface HomeProps {
   }>;
 }
 
+export const dynamic = "force-dynamic";
+
 export default async function Home({ searchParams }: HomeProps) {
   const session = await getSession();
   const { q = "" } = await searchParams;

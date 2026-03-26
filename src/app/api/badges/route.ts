@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ATHUB_COLLECTIONS, isBadgeType } from "@/lib/athub/collections";
 import type { BadgeRecord } from "@/lib/athub/types";
-import { getSession } from "@/lib/auth/session";
+import { getSession } from "@/lib/auth/session.server";
 import { createRecord } from "@/lib/atproto/xrpc";
 import {
   getStrongRefByUri,

@@ -6,7 +6,7 @@ import { CreateProposalForm } from "@/components/CreateProposalForm";
 import { LoginForm } from "@/components/LoginForm";
 import { LogoutButton } from "@/components/LogoutButton";
 import { ProposalStateToggle } from "@/components/ProposalStateToggle";
-import { getSession } from "@/lib/auth/session";
+import { getSession } from "@/lib/auth/session.server";
 import {
   getQuestByDidRkey,
   listBadgesBySubjects,

@@ -17,11 +17,19 @@ function OAuthCallbackContent() {
       try {
         const client = getOAuthClient();
         const { session } = await client.callback(searchParams);
+        const response = await fetch("/api/auth/session", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ did: session.did }),
+        });
 
-        // SSRでもユーザー識別ができるようにDIDをCookieに保存
-        document.cookie = `did=${session.did}; path=/; max-age=604800; samesite=lax`;
+        if (!response.ok) {
+          throw new Error("Failed to persist login session");
+        }
 
-        router.push("/");
+        window.location.replace("/");
       } catch (error) {
         console.error("OAuth callback error:", error);
         router.push("/?error=login_failed");
