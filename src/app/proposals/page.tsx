@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { BadgeForm } from "@/components/BadgeForm";
 import { ProposalStateToggle } from "@/components/ProposalStateToggle";
-import { getSession } from "@/lib/auth/session";
+import { getSession } from "@/lib/auth/session.server";
 import { fetchBskyThreadSummary } from "@/lib/atproto/bsky";
 import {
   getProposalByUri,
