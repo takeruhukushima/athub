@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { Suspense, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getOAuthClient } from "@/lib/auth/client";
 
-export default function OAuthCallbackPage() {
+function OAuthCallbackContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const processed = useRef(false);
@@ -38,5 +38,22 @@ export default function OAuthCallbackPage() {
         <p className="mt-2 text-stone-600">Please wait a moment.</p>
       </div>
     </div>
+  );
+}
+
+export default function OAuthCallbackPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center bg-stone-50">
+          <div className="text-center">
+            <h1 className="text-xl font-semibold">Signing you in...</h1>
+            <p className="mt-2 text-stone-600">Please wait a moment.</p>
+          </div>
+        </div>
+      }
+    >
+      <OAuthCallbackContent />
+    </Suspense>
   );
 }

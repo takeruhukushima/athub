@@ -6,8 +6,8 @@ export async function getSession(): Promise<OAuthSession | null> {
 
   try {
     const client = getOAuthClient();
-    const { session } = await client.init();
-    return session || null;
+    const result = await client.init();
+    return result?.session || null;
   } catch (error) {
     console.error("Failed to get session:", error);
     return null;
@@ -19,9 +19,9 @@ export async function logout(): Promise<void> {
 
   try {
     const client = getOAuthClient();
-    const { session } = await client.init();
-    if (session) {
-      await client.revoke(session.did);
+    const result = await client.init();
+    if (result?.session) {
+      await client.revoke(result.session.did);
     }
   } catch (error) {
     console.error("Logout error:", error);
