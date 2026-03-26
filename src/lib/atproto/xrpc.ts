@@ -29,11 +29,17 @@ async function parseJsonResponse(response: Response): Promise<unknown> {
 }
 
 async function xrpcRequest<T>(
-  session: OAuthSession,
+  session: OAuthSession | { did: string; fetchHandler?: never },
   nsid: string,
   init: RequestInit,
 ): Promise<T> {
-  const response = await session.fetchHandler(`/xrpc/${nsid}`, init);
+  const fetchHandler = session.fetchHandler || (async (path: string, options?: RequestInit) => {
+    // サーバーサイドなどでfetchHandlerがない場合は、デフォルトのPDS/Relayを使用
+    const baseUrl = "https://bsky.social";
+    return fetch(`${baseUrl}${path}`, options);
+  });
+
+  const response = await fetchHandler(`/xrpc/${nsid}`, init);
   const data = await parseJsonResponse(response);
 
   if (!response.ok) {

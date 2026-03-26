@@ -1,85 +1,35 @@
-
-import {
-  NodeOAuthClient,
-  buildAtprotoLoopbackClientMetadata,
-} from "@atproto/oauth-client-node";
-import type {
-  NodeSavedSession,
-  NodeSavedState,
-} from "@atproto/oauth-client-node";
-import { getDb } from "../db";
+import { BrowserOAuthClient } from "@atproto/oauth-client-browser";
 
 export const SCOPE =
   "atproto repo:app.athub.repo repo:app.athub.issue repo:app.athub.commit repo:app.athub.award";
 
-// Next.jsのホットリロードで消えないよう、globalThisを使います
-const globalAuth = globalThis as unknown as {
-  stateStore: Map<string, NodeSavedState>;
-  sessionStore: Map<string, NodeSavedSession>;
+const PUBLIC_URL = process.env.NEXT_PUBLIC_URL || "http://127.0.0.1:3000";
+
+export const clientMetadata = {
+  client_name: "athub",
+  client_id: `${PUBLIC_URL}/oauth-client-metadata.json`,
+  client_uri: PUBLIC_URL,
+  redirect_uris: [`${PUBLIC_URL}/oauth/callback`],
+  scope: SCOPE,
+  grant_types: ["authorization_code", "refresh_token"],
+  response_types: ["code"],
+  application_type: "web",
+  token_endpoint_auth_method: "none",
+  dpop_bound_access_tokens: true,
 };
-globalAuth.stateStore ??= new Map();
-globalAuth.sessionStore ??= new Map();
 
-let client: NodeOAuthClient | null = null;
+let client: BrowserOAuthClient | null = null;
 
-export async function getOAuthClient(): Promise<NodeOAuthClient> {
+export function getOAuthClient(): BrowserOAuthClient {
+  if (typeof window === "undefined") {
+    throw new Error("getOAuthClient must be called on the client side");
+  }
+
   if (client) return client;
 
-  client = new NodeOAuthClient({
-    clientMetadata: buildAtprotoLoopbackClientMetadata({
-      scope: SCOPE,
-      redirect_uris: ["http://127.0.0.1:3000/oauth/callback"],
-    }),
-  
-    stateStore: {
-      async get(key: string) {
-        const db = getDb();
-        const row = await db
-          .selectFrom("auth_state")
-          .select("value")
-          .where("key", "=", key)
-          .executeTakeFirst();
-        return row ? JSON.parse(row.value) : undefined;
-      },
-      async set(key: string, value: NodeSavedState) {
-        const db = getDb();
-        const valueJson = JSON.stringify(value);
-        await db
-        .insertInto("auth_state")
-        .values({ key, value: valueJson })
-        .onConflict((oc) => oc.column("key").doUpdateSet({ value: valueJson }))
-        .execute();
-      },
-      async del(key: string) {
-        const db = getDb();
-        await db.deleteFrom("auth_state").where("key", "=", key).execute();
-      },
-    },
-
-    sessionStore: {
-      async get(key: string) {
-        const db = getDb();
-        const row = await db
-          .selectFrom("auth_session")
-          .select("value")
-          .where("key", "=", key)
-          .executeTakeFirst();
-        return row ? JSON.parse(row.value) : undefined;
-      },
-      async set(key: string, value: NodeSavedSession) {
-        const db = getDb();
-        const valueJson = JSON.stringify(value);
-        await db
-        .insertInto("auth_session")
-        .values({ key, value: valueJson })
-        .onConflict((oc) => oc.column("key").doUpdateSet({ value: valueJson }))
-        .execute();
-      },
-      async del(key: string) {
-        const db = getDb();
-        await db.deleteFrom("auth_session").where("key", "=", key).execute();
-      },
-    },
+  client = new BrowserOAuthClient({
+    clientMetadata,
+    handleResolver: "https://bsky.social",
   });
 
   return client;
