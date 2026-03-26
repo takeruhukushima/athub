@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "pnpm migrate && next dev",
-    "build": "pnpm migrate && next build",
-    "start": "pnpm migrate && next start",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
     "lint": "eslint",
     "migrate": "tsx src/scripts/migrate.ts"
   },
