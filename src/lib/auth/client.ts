@@ -9,12 +9,15 @@ export const clientMetadata = {
   client_name: "athub",
   client_id: `${PUBLIC_URL}/oauth-client-metadata.json`,
   client_uri: PUBLIC_URL,
-  redirect_uris: [`${PUBLIC_URL}/oauth/callback`],
+  redirect_uris: [`${PUBLIC_URL}/oauth/callback`] as [string, ...string[]],
   scope: SCOPE,
-  grant_types: ["authorization_code", "refresh_token"],
-  response_types: ["code"],
-  application_type: "web",
-  token_endpoint_auth_method: "none",
+  grant_types: ["authorization_code", "refresh_token"] as [
+    "authorization_code",
+    "refresh_token",
+  ],
+  response_types: ["code"] as ["code"],
+  application_type: "web" as "web",
+  token_endpoint_auth_method: "none" as "none",
   dpop_bound_access_tokens: true,
 };
 
