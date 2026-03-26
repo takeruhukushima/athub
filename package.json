@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "pnpm migrate && next dev",
-    "build": "next build",
+    "build": "pnpm migrate && next build",
     "start": "pnpm migrate && next start",
     "lint": "eslint",
     "migrate": "tsx src/scripts/migrate.ts"

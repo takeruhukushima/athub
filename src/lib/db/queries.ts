@@ -113,124 +113,164 @@ export interface ActivityView {
 }
 
 export async function upsertAccount(data: AccountTable): Promise<void> {
-  await getDb()
-    .insertInto("account")
-    .values(data)
-    .onConflict((oc) =>
-      oc.column("did").doUpdateSet({
-        handle: data.handle,
-        active: data.active,
-        indexedAt: data.indexedAt,
-      }),
-    )
-    .execute();
+  try {
+    await getDb()
+      .insertInto("account")
+      .values(data)
+      .onConflict((oc) =>
+        oc.column("did").doUpdateSet({
+          handle: data.handle,
+          active: data.active,
+          indexedAt: data.indexedAt,
+        }),
+      )
+      .execute();
+  } catch (e) {
+    console.error("Failed to upsert account:", e);
+  }
 }
 
 export async function deleteAccount(did: string): Promise<void> {
-  await getDb().deleteFrom("account").where("did", "=", did).execute();
+  try {
+    await getDb().deleteFrom("account").where("did", "=", did).execute();
+  } catch (e) {
+    console.error("Failed to delete account:", e);
+  }
 }
 
 export async function upsertQuestCache(data: QuestCacheTable): Promise<void> {
-  await getDb()
-    .insertInto("quest_cache")
-    .values(data)
-    .onConflict((oc) =>
-      oc.column("uri").doUpdateSet({
-        did: data.did,
-        rkey: data.rkey,
-        cid: data.cid,
-        name: data.name,
-        description: data.description,
-        topicsJson: data.topicsJson,
-        createdAt: data.createdAt,
-        indexedAt: data.indexedAt,
-      }),
-    )
-    .execute();
+  try {
+    await getDb()
+      .insertInto("quest_cache")
+      .values(data)
+      .onConflict((oc) =>
+        oc.column("uri").doUpdateSet({
+          did: data.did,
+          rkey: data.rkey,
+          cid: data.cid,
+          name: data.name,
+          description: data.description,
+          topicsJson: data.topicsJson,
+          createdAt: data.createdAt,
+          indexedAt: data.indexedAt,
+        }),
+      )
+      .execute();
+  } catch (e) {
+    console.error("Failed to upsert quest cache:", e);
+  }
 }
 
 export async function deleteQuestCache(uri: string): Promise<void> {
-  await getDb().deleteFrom("quest_cache").where("uri", "=", uri).execute();
+  try {
+    await getDb().deleteFrom("quest_cache").where("uri", "=", uri).execute();
+  } catch (e) {
+    console.error("Failed to delete quest cache:", e);
+  }
 }
 
 export async function upsertProposalCache(data: ProposalCacheTable): Promise<void> {
-  await getDb()
-    .insertInto("proposal_cache")
-    .values(data)
-    .onConflict((oc) =>
-      oc.column("uri").doUpdateSet({
-        did: data.did,
-        rkey: data.rkey,
-        cid: data.cid,
-        questUri: data.questUri,
-        questCid: data.questCid,
-        title: data.title,
-        body: data.body,
-        state: data.state,
-        bskyThreadUri: data.bskyThreadUri,
-        createdAt: data.createdAt,
-        indexedAt: data.indexedAt,
-      }),
-    )
-    .execute();
+  try {
+    await getDb()
+      .insertInto("proposal_cache")
+      .values(data)
+      .onConflict((oc) =>
+        oc.column("uri").doUpdateSet({
+          did: data.did,
+          rkey: data.rkey,
+          cid: data.cid,
+          questUri: data.questUri,
+          questCid: data.questCid,
+          title: data.title,
+          body: data.body,
+          state: data.state,
+          bskyThreadUri: data.bskyThreadUri,
+          createdAt: data.createdAt,
+          indexedAt: data.indexedAt,
+        }),
+      )
+      .execute();
+  } catch (e) {
+    console.error("Failed to upsert proposal cache:", e);
+  }
 }
 
 export async function deleteProposalCache(uri: string): Promise<void> {
-  await getDb().deleteFrom("proposal_cache").where("uri", "=", uri).execute();
+  try {
+    await getDb().deleteFrom("proposal_cache").where("uri", "=", uri).execute();
+  } catch (e) {
+    console.error("Failed to delete proposal cache:", e);
+  }
 }
 
 export async function upsertContributionCache(
   data: ContributionCacheTable,
 ): Promise<void> {
-  await getDb()
-    .insertInto("contribution_cache")
-    .values(data)
-    .onConflict((oc) =>
-      oc.column("uri").doUpdateSet({
-        did: data.did,
-        rkey: data.rkey,
-        cid: data.cid,
-        questUri: data.questUri,
-        questCid: data.questCid,
-        message: data.message,
-        body: data.body,
-        mediaJson: data.mediaJson,
-        createdAt: data.createdAt,
-        indexedAt: data.indexedAt,
-      }),
-    )
-    .execute();
+  try {
+    await getDb()
+      .insertInto("contribution_cache")
+      .values(data)
+      .onConflict((oc) =>
+        oc.column("uri").doUpdateSet({
+          did: data.did,
+          rkey: data.rkey,
+          cid: data.cid,
+          questUri: data.questUri,
+          questCid: data.questCid,
+          message: data.message,
+          body: data.body,
+          mediaJson: data.mediaJson,
+          createdAt: data.createdAt,
+          indexedAt: data.indexedAt,
+        }),
+      )
+      .execute();
+  } catch (e) {
+    console.error("Failed to upsert contribution cache:", e);
+  }
 }
 
 export async function deleteContributionCache(uri: string): Promise<void> {
-  await getDb()
-    .deleteFrom("contribution_cache")
-    .where("uri", "=", uri)
-    .execute();
+  try {
+    await getDb()
+      .deleteFrom("contribution_cache")
+      .where("uri", "=", uri)
+      .execute();
+  } catch (e) {
+    console.error("Failed to delete contribution cache:", e);
+  }
 }
 
 export async function upsertBadgeCache(data: BadgeCacheTable): Promise<void> {
-  await getDb()
-    .insertInto("badge_cache")
-    .values(data)
-    .onConflict((oc) =>
-      oc.column("uri").doUpdateSet({
-        did: data.did,
-        rkey: data.rkey,
-        cid: data.cid,
-        subjectUri: data.subjectUri,
-        subjectCid: data.subjectCid,
-        badgeType: data.badgeType,
-        comment: data.comment,
-        createdAt: data.createdAt,
-        indexedAt: data.indexedAt,
-      }),
-    )
-    .execute();
+  try {
+    await getDb()
+      .insertInto("badge_cache")
+      .values(data)
+      .onConflict((oc) =>
+        oc.column("uri").doUpdateSet({
+          did: data.did,
+          rkey: data.rkey,
+          cid: data.cid,
+          subjectUri: data.subjectUri,
+          subjectCid: data.subjectCid,
+          badgeType: data.badgeType,
+          comment: data.comment,
+          createdAt: data.createdAt,
+          indexedAt: data.indexedAt,
+        }),
+      )
+      .execute();
+  } catch (e) {
+    console.error("Failed to upsert badge cache:", e);
+  }
 }
 
 export async function deleteBadgeCache(uri: string): Promise<void> {
-  await getDb().deleteFrom("badge_cache").where("uri", "=", uri).execute();
+  try {
+    await getDb().deleteFrom("badge_cache").where("uri", "=", uri).execute();
+  } catch (e) {
+    console.error("Failed to delete badge cache:", e);
+  }
 }
 
 export async function listQuestsByDid(
